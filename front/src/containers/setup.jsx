@@ -189,15 +189,6 @@ class Setup extends Component {
           NextStep();
           break;
         case 5:
-          if (!picture.pic1_url)
-            picture.pic1_url = {};
-          if (!picture.pic2_url)
-            picture.pic2_url = {};
-          if (!picture.pic3_url)
-            picture.pic3_url = {};
-          this.setState({
-            picture,
-          });
           NextStep();
           break;
       }
