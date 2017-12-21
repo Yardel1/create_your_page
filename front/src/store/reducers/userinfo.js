@@ -2,13 +2,15 @@ import * as actionTypes from '../actions';
 
 const initialState = {
   userInfo: {
-    name: '',
-    occupation: '',
-    description: '',
-    facebook: '',
+    name: 'yarden',
+    occupation: 'home',
+    description: 'walking',
+    facebook: 'yo',
     instagram: '',
     linkedin: '',
     twitter: '',
+    email: 'y@y.com',
+    password: 'hello123'
   },
 };
 

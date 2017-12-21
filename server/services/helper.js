@@ -1,60 +1,31 @@
-require('dotenv').config(); 
+require('dotenv').config();
 const sha1 = require('sha1');
 const superagent = require('superagent');
+const API_KEY = process.env.API_KEY;
 
-
-/* 
-this does not work at this point. 
-Leaving this for later
-*/
-
-
- const cloudName = process.env.cloudName;
- const uploadPreset = process.env.uploadPreset;
- const api_key = process.env.api_key;
-
-const imageSender2 = image => {
-  const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
-  const timestamp = Date.now()/1000
-  const paramsStr = `timestamp=${timestamp}&upload_preset=${uploadPreset}-MtjkttbQ3j-XPtL4VwET44kzCk`
-  const signature = sha1(paramsStr)
-  const params = {
-    'api_key': api_key,
-    'timestamp': timestamp,
-    'upload_preset': uploadPreset,
-    'signature': signature
-  }
-  let uploadRequest = superagent.post(url)
-  uploadRequest.attach('file', image)
-  Object.keys(params).forEach((key) => uploadRequest.field(key, params[key]))
-  uploadRequest.end((err, res) => {
-    console.log(`upload complete:${JSON.stringify(res.body)}`)
-    const uploaded = JSON.stringify(res.body.url)
-  })
+function Upload(params, uploadRequest) {
+  this.params = params;
+  this.uploadRequest = uploadRequest;
 }
 
-const imageSender = (req,res,next) => {
-  const image = req.body.image
-  console.log(req)
-  const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
-  const timestamp = Date.now()/1000
-  const paramsStr = `timestamp=${timestamp}&upload_preset=${uploadPreset}-MtjkttbQ3j-XPtL4VwET44kzCk`
-  const signature = sha1(paramsStr)
-  const params = {
-    'api_key': api_key,
-    'timestamp': timestamp,
-    'upload_preset': uploadPreset,
-    'signature': signature
-  }
-  let uploadRequest = superagent.post(url)
-  uploadRequest.attach('file', image)
-  Object.keys(params).forEach((key) => uploadRequest.field(key, params[key]))
-  uploadRequest.end((err, res) => {
-    console.log(`upload complete:${JSON.stringify(res.body)}`)
-    res.uploaded = JSON.stringify(res.body.url)
-    next()
-  })
-  
-}
-
-module.exports = imageSender;
+const generator = (req, res, next) => {
+  const uploadPreset = UPLOAD_PRESET;
+  const api_key = CLOUDINARY_KEY;
+  const cloudName = CLOUD_NAME;
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+  const timestamp = Date.now() / 1000;
+  const paramsStr = `timestamp=${timestamp}&upload_preset=${uploadPreset}${CLOUDINARY_KEY2}`;
+  const signature = sha1(paramsStr);
+  res.uploadDetails = new Upload(
+    {
+      api_key: api_key,
+      timestamp: timestamp,
+      upload_preset: uploadPreset,
+      signature: signature,
+    },
+    superagent.post(url),
+  );
+  console.log(res.uploadDetails);
+  next();
+};
+module.exports = generator;

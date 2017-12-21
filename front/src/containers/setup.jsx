@@ -81,7 +81,8 @@ class Setup extends Component {
     this.getThumbnails(links);
   };
   sendPictures = (images, names) => {
-    if (!images.length) return this.setupDone();
+    console.log(`sending ${images[0]}`);
+    if (!images[0]) return this.setupDone();
     else {
       if (!images[0].Image) {
         images.shift();
@@ -113,7 +114,9 @@ class Setup extends Component {
             image,
             url,
           };
-          this.props.UpdateUserPic(pictureDetails);
+          this.props.UpdateUserPic(
+            pictureDetails,
+          );
           images.shift();
           names.shift();
           this.sendPictures(images, names);
@@ -123,10 +126,11 @@ class Setup extends Component {
     //consider placing in backend
   };
   setupDone = () => {
+    console.log(this.props.userInfo)
     axios({
       method: 'POST',
       url: 'http://localhost:3002/create/1',
-      data: this.state.userInfo,
+      data: this.props.userInfo,
     })
       .then(res =>
         this.setState({
@@ -136,6 +140,7 @@ class Setup extends Component {
       .catch(res => this.setState({ step: 0 }));
   };
   LastStep = () => {
+    console.log('initializing last Step ');
     //send & save the pictures' url
     const {
       picture,
@@ -155,6 +160,7 @@ class Setup extends Component {
       'pic3_url',
     ];
     //this.cleanUp(pictureList,names) removes any empty objects and their corresponding names
+    console.log('initializing sendPictures');
     this.sendPictures(pictureList, names);
     NextStep();
   };

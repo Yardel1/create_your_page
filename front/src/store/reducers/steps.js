@@ -1,7 +1,8 @@
 import * as actionTypes from '../actions';
 
 const initialState = {
-    step: 1,
+    step: 6,
+    fireRedirect: false
 };
 
 const reducer = (
@@ -10,9 +11,14 @@ const reducer = (
 ) => {
     switch (action.type) {
         case actionTypes.NEXT_STEP:
-            return { step: state.step + 1 };
+            return { ...state,
+                step: state.step + 1 
+            };
         case actionTypes.PREV_STEP:
-            return { step: state.step - 1 };
+            return { 
+                ...state,
+                step: state.step - 1 
+            };
     }
     return state;
 };

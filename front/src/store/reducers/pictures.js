@@ -2,14 +2,14 @@ import * as actionTypes from '../actions';
 
 const initialState = {
   picture: {
-    profile_image: '',
-    profile_url: '',
-    pic1_image: '',
-    pic1_url: '',
-    pic2_image: '',
-    pic2_url: '',
-    pic3_image: '',
-    pic3_url: '',
+    profile_image: 'http://test.com',
+    profile_url: 'http://test.com',
+    pic1_image: 'http://test.com',
+    pic1_url: 'http://test.com',
+    pic2_image: 'http://test.com',
+    pic2_url: 'http://test.com',
+    pic3_image: 'http://test.com',
+    pic3_url: 'http://test.com',
   }
 };
 
