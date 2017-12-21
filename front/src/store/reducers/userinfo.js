@@ -10,7 +10,8 @@ const initialState = {
     linkedin: '',
     twitter: '',
     email: 'y@y.com',
-    password: 'hello123'
+    password: 'hello123',
+    profile_type: 'pictures',
   },
 };
 

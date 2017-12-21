@@ -16,12 +16,6 @@ String.prototype.capitalize = function() {
 }; //taken from stackOverflow
 
 class Setup extends Component {
-  state = {
-    userInfo: null,
-    step: 1,
-    picture: {},
-    fireRedirect: false,
-  };
 
   imageToState = (files, name) => {
     //learned and borrowed some code from here: https://codepen.io/hartzis/pen/VvNGZP?editors=1010
@@ -63,9 +57,9 @@ class Setup extends Component {
       )
       .then(res => {
         console.log(res);
-        let userInfo = this.state.userInfo;
+        let userInfo = this.props.userInfo;
         let index =
-          this.state.links.length - links.length;
+          this.props.links.length - links.length;
         userInfo.links[index].thumbnail = res;
         this.setState({
           userInfo: userInfo,
@@ -126,7 +120,7 @@ class Setup extends Component {
     //consider placing in backend
   };
   setupDone = () => {
-    console.log(this.props.userInfo)
+    console.log(this.props.userInfo);
     axios({
       method: 'POST',
       url: 'http://localhost:3002/create/1',
@@ -301,13 +295,6 @@ class Setup extends Component {
         picGallery.pic1 = picture.pic1_url;
         picGallery.pic2 = picture.pic2_url;
         picGallery.pic3 = picture.pic3_url;
-        if (!this.state.picture) {
-          //for testing purposes
-          let picture = {};
-          this.setState({
-            picture: picture,
-          });
-        }
         if (userInfo.profile_type === 'pictures')
           return (
             <Pics
@@ -367,7 +354,7 @@ const mapStateToProps = state => {
     userInfo: state.UserInfo.userInfo,
     step: state.Steps.step,
     picture: state.Pictures.picture,
-    fireRedirect: state.fireRedirect,
+    fireRedirect: state.Steps.fireRedirect,
   };
 };
 const mapDispatchToProps = dispatch => {
