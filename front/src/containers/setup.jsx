@@ -88,12 +88,15 @@ class Setup extends Component {
     //generates request
     axios
       .get(`http://localhost:3002/config/request`)
-      .then(res => {
-        console.log(res);
+      .then(data => {
+        console.log(data.data);
         const {
-          uploadRequest,
+          url,
           params,
-        } = res.uploadDetails;
+        } = data.data.data;
+        const uploadRequest = superagent.post(
+          url,
+        );
         uploadRequest.attach('file', images[0]);
         Object.keys(params).forEach(key =>
           uploadRequest.field(key, params[key]),

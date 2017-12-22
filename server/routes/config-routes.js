@@ -32,13 +32,19 @@ configController.update = (req, res) => {
     })
     .catch(err => console.log(err));
 };
-configController.generateUpload = (req, res) => {
+configController.generateUpload = (
+  req,
+  res,
+  next,
+) => {
   console.log(
     `---> configController, initiliating generator`,
   );
-  res.uploadDetails = generator();
-  console.log(res.uploadDetails);
-  message: 'site served';
+  const uploadDetails = generator();
+  res.json({
+    data: uploadDetails,
+    message: 'request ready',
+  });
 };
 
 configRoutes.put(

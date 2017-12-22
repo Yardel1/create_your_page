@@ -7,9 +7,9 @@ const CLOUDINARY_KEY = process.env.CLOUDINARY_KEY;
 const CLOUDINARY_KEY2 = process.env.CLOUDINARY_KEY2;
 const CLOUD_NAME = process.env.CLOUD_NAME;
 
-function Upload(params, uploadRequest) {
+function Upload(params, url) {
   this.params = params;
-  this.uploadRequest = uploadRequest;
+  this.url = url;
 }
 
 const generator = (req, res, next) => {
@@ -26,7 +26,7 @@ const generator = (req, res, next) => {
       upload_preset: uploadPreset,
       signature: signature,
     },
-    superagent.post(url),
+    url
   );
 };
 module.exports = generator;
