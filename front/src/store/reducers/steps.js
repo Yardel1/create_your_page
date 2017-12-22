@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions';
 
 const initialState = {
-    step: 6,
+    step: 7,
     fireRedirect: false
 };
 

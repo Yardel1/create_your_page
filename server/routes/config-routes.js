@@ -32,6 +32,15 @@ configController.update = (req, res) => {
     })
     .catch(err => console.log(err));
 };
+configController.generateUpload = (req, res) => {
+  console.log(
+    `---> configController, initiliating generator`,
+  );
+  res.uploadDetails = generator();
+  console.log(res.uploadDetails);
+  message: 'site served';
+};
+
 configRoutes.put(
   '/:name',
   configController.update,
@@ -40,6 +49,9 @@ configRoutes.delete(
   '/:name',
   configController.removeSite,
 );
-configRoutes.get('/request', generator);
+configRoutes.get(
+  '/request',
+  configController.generateUpload,
+);
 
 module.exports = configRoutes;

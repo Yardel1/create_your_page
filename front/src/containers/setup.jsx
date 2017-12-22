@@ -16,7 +16,6 @@ String.prototype.capitalize = function() {
 }; //taken from stackOverflow
 
 class Setup extends Component {
-
   imageToState = (files, name) => {
     //learned and borrowed some code from here: https://codepen.io/hartzis/pen/VvNGZP?editors=1010
     const image = files[0];
@@ -75,10 +74,10 @@ class Setup extends Component {
     this.getThumbnails(links);
   };
   sendPictures = (images, names) => {
-    console.log(`sending ${images[0]}`);
-    if (!images[0]) return this.setupDone();
+    if (!images.length) return this.setupDone();
     else {
-      if (!images[0].Image) {
+      console.log(`sending ${images[0]}`);
+      if (!images[0]) {
         images.shift();
         names.shift();
         return this.sendPictures(images, names);
@@ -90,6 +89,7 @@ class Setup extends Component {
     axios
       .get(`http://localhost:3002/config/request`)
       .then(res => {
+        console.log(res);
         const {
           uploadRequest,
           params,
