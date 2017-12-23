@@ -5,3 +5,5 @@ export const PROFILE = 'PROFILE';
 export const PICTURE1 = 'PICTURE1';
 export const PICTURE2 = 'PICTURE2';
 export const PICTURE3 = 'PICTURE3';
+export const REDIRECT = 'REDIRECT';
+;

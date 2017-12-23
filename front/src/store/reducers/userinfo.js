@@ -2,16 +2,16 @@ import * as actionTypes from '../actions';
 
 const initialState = {
   userInfo: {
-    name: 'yarden',
-    occupation: 'home',
-    description: 'walking',
-    facebook: 'yo',
+/*     name: '',
+    occupation: '',
+    description: '',
+    facebook: '',
     instagram: '',
     linkedin: '',
     twitter: '',
-    email: 'y@y.com',
-    password: 'hello123',
-    profile_type: 'pictures',
+    email: '',
+    password: '',
+    profile_type: '', */
   },
 };
 

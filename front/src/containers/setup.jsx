@@ -9,6 +9,16 @@ import axios from 'axios';
 import Steps from '../components/setup/steps';
 import * as actionTypes from '../store/actions';
 
+class PictureObject {
+  constructor(name, image, url) {
+    this.name = name; //'PROFILE','PICTURE1',etc
+    this.image = image; //image object or filler 'sent'
+    this.url = url; //'http://bla.com/...'
+  }
+  print = () =>
+    console.log(this.name, this.image, this.url);
+}
+
 String.prototype.capitalize = function() {
   return this.replace(/(?:^|\s)\S/g, char =>
     char.toUpperCase(),
@@ -22,11 +32,11 @@ class Setup extends Component {
     let reader = new FileReader();
     reader.onloadend = () => {
       const url = reader.result;
-      const pictureDetails = {
+      const pictureDetails = new PictureObject(
         name,
         image,
         url,
-      };
+      );
       this.props.UpdateUserPic(pictureDetails);
       /* this.setState({
         picture: pictureObject,
@@ -83,17 +93,13 @@ class Setup extends Component {
         return this.sendPictures(images, names);
       }
     }
-    const key = names[0];
+    const name = names[0];
 
     //generates request
     axios
       .get(`http://localhost:3002/config/request`)
       .then(data => {
-        console.log(data.data);
-        const {
-          url,
-          params,
-        } = data.data.data;
+        const { url, params } = data.data.data;
         const uploadRequest = superagent.post(
           url,
         );
@@ -103,14 +109,14 @@ class Setup extends Component {
         );
         uploadRequest.end((err, res) => {
           if (err) return console.log(err);
-          let userInfo = this.props.userInfo;
           const url = res.body.url;
           const image = 'sent';
-          const pictureDetails = {
-            key,
+
+          const pictureDetails = new PictureObject(
+            name,
             image,
             url,
-          };
+          );
           this.props.UpdateUserPic(
             pictureDetails,
           );
@@ -124,17 +130,21 @@ class Setup extends Component {
   };
   setupDone = () => {
     console.log(this.props.userInfo);
+    const data = { ...this.props.userInfo };
+    data.picture1 = this.props.picture.pic1_url;
+    data.picture2 = this.props.picture.pic2_url;
+    data.picture3 = this.props.picture.pic3_url;
     axios({
       method: 'POST',
       url: 'http://localhost:3002/create/1',
-      data: this.props.userInfo,
+      data,
     })
-      .then(res =>
-        this.setState({
-          fireRedirect: true,
-        }),
-      )
-      .catch(res => this.setState({ step: 0 }));
+      .then(res => this.props.Redirect())
+      .catch(res =>
+        console.log(
+          'something went wrong with storing your data',
+        ),
+      );
   };
   LastStep = () => {
     console.log('initializing last Step ');
@@ -151,10 +161,10 @@ class Setup extends Component {
       picture.pic3_image,
     ];
     const names = [
-      'profile_url',
-      'pic1_url',
-      'pic2_url',
-      'pic3_url',
+      actionTypes.PROFILE,
+      actionTypes.PICTURE1,
+      actionTypes.PICTURE2,
+      actionTypes.PICTURE3,
     ];
     //this.cleanUp(pictureList,names) removes any empty objects and their corresponding names
     console.log('initializing sendPictures');
@@ -369,6 +379,10 @@ const mapDispatchToProps = dispatch => {
     BackStep: () =>
       dispatch({
         type: actionTypes.PREV_STEP,
+      }),
+    Redirect: () =>
+      dispatch({
+        type: actionTypes.REDIRECT,
       }),
     UpdateUserInfo: (property, input) =>
       dispatch({
