@@ -9,6 +9,8 @@ import axios from 'axios';
 import Steps from '../components/setup/steps';
 import * as actionTypes from '../store/actions';
 
+const SERVER = `http://localhost:3002/`;
+
 class PictureObject {
   constructor(name, image, url) {
     this.name = name; //'PROFILE','PICTURE1',etc
@@ -21,13 +23,12 @@ class PictureObject {
 
 String.prototype.capitalize = function() {
   return this.replace(/(?:^|\s)\S/g, char =>
-    char.toUpperCase(),
+    char.toUpperCase()
   );
 }; //taken from stackOverflow
 
 class Setup extends Component {
   imageToState = (files, name) => {
-    //learned and borrowed some code from here: https://codepen.io/hartzis/pen/VvNGZP?editors=1010
     const image = files[0];
     let reader = new FileReader();
     reader.onloadend = () => {
@@ -35,7 +36,7 @@ class Setup extends Component {
       const pictureDetails = new PictureObject(
         name,
         image,
-        url,
+        url
       );
       this.props.UpdateUserPic(pictureDetails);
       /* this.setState({
@@ -56,69 +57,39 @@ class Setup extends Component {
   set3 = file => {
     this.imageToState(file, actionTypes.PICTURE3);
   };
-  getThumbnails = links => {
-    if (!links.length) return this.setupDone();
-    axios
-      .get(
-        `http://free.pagepeeker.com/v2/thumbs.php?size=x&url=${
-          links[0].url
-        }`,
-      )
-      .then(res => {
-        console.log(res);
-        let userInfo = this.props.userInfo;
-        let index =
-          this.props.links.length - links.length;
-        userInfo.links[index].thumbnail = res;
-        this.setState({
-          userInfo: userInfo,
-        });
-        links.shift();
-        return this.getThumbnails(links);
-      });
-  };
-  sendLinks = links => {
-    console.log(links);
-    let userInfo = this.state.userInfo;
-    userInfo.links = links;
-    this.getThumbnails(links);
-  };
   sendPictures = (images, names) => {
     if (!images.length) return this.setupDone();
-    else {
-      console.log(`sending ${images[0]}`);
-      if (!images[0]) {
-        images.shift();
-        names.shift();
-        return this.sendPictures(images, names);
-      }
+    else if (!images[0]) {
+      images.shift();
+      names.shift();
+      return this.sendPictures(images, names);
     }
     const name = names[0];
-
-    //generates request
+    const image = images[0];
+    //console.log(`sending ${name}`);
     axios
-      .get(`http://localhost:3002/config/request`)
+      .get(`${SERVER}config/request`)
       .then(data => {
         const { url, params } = data.data.data;
         const uploadRequest = superagent.post(
-          url,
+          url
         );
-        uploadRequest.attach('file', images[0]);
+        uploadRequest.attach('file', image);
         Object.keys(params).forEach(key =>
-          uploadRequest.field(key, params[key]),
+          uploadRequest.field(key, params[key])
         );
         uploadRequest.end((err, res) => {
           if (err) return console.log(err);
           const url = res.body.url;
-          const image = 'sent';
+          const status = 'sent';
 
           const pictureDetails = new PictureObject(
             name,
-            image,
-            url,
+            status,
+            url
           );
           this.props.UpdateUserPic(
-            pictureDetails,
+            pictureDetails
           );
           images.shift();
           names.shift();
@@ -129,21 +100,21 @@ class Setup extends Component {
     //consider placing in backend
   };
   setupDone = () => {
-    console.log(this.props.userInfo);
     const data = { ...this.props.userInfo };
+    data.profile_pic = this.props.picture.profile_url;
     data.picture1 = this.props.picture.pic1_url;
     data.picture2 = this.props.picture.pic2_url;
     data.picture3 = this.props.picture.pic3_url;
     axios({
       method: 'POST',
-      url: 'http://localhost:3002/create/1',
-      data,
+      url: `${SERVER}create/1`,
+      data
     })
       .then(res => this.props.Redirect())
       .catch(res =>
         console.log(
-          'something went wrong with storing your data',
-        ),
+          'something went wrong with storing your data'
+        )
       );
   };
   LastStep = () => {
@@ -152,22 +123,22 @@ class Setup extends Component {
     const {
       picture,
       step,
-      NextStep,
+      NextStep
     } = this.props;
     const pictureList = [
       picture.profile_image,
       picture.pic1_image,
       picture.pic2_image,
-      picture.pic3_image,
+      picture.pic3_image
     ];
     const names = [
       actionTypes.PROFILE,
       actionTypes.PICTURE1,
       actionTypes.PICTURE2,
-      actionTypes.PICTURE3,
+      actionTypes.PICTURE3
     ];
     //this.cleanUp(pictureList,names) removes any empty objects and their corresponding names
-    console.log('initializing sendPictures');
+    //console.log('initializing sendPictures',pictureList);
     this.sendPictures(pictureList, names);
     NextStep();
   };
@@ -178,12 +149,12 @@ class Setup extends Component {
       UpdateUserInfo,
       userInfo,
       step,
-      picture,
+      picture
     } = this.props;
     event.preventDefault();
     let {
       name: property,
-      value: userInput,
+      value: userInput
     } = event.target;
     if (
       step === 1 &&
@@ -215,7 +186,6 @@ class Setup extends Component {
             }); */
     }
   };
-
   QuestionStep = () => {
     const {
       ProvideName,
@@ -226,14 +196,14 @@ class Setup extends Component {
       TypeInfo: { Pics, Links },
       PickPW,
       Prepare,
-      Error,
+      Error
     } = Steps;
     const {
       NextStep,
       BackStep,
       userInfo,
       step,
-      picture,
+      picture
     } = this.props;
     let {
       name,
@@ -243,6 +213,7 @@ class Setup extends Component {
       instagram,
       linkedin,
       twitter,
+      profile_type
     } = userInfo;
     switch (step) {
       case 0:
@@ -273,9 +244,7 @@ class Setup extends Component {
           <Description
             InputStep={this.InputStep}
             BackStep={BackStep}
-            description={
-              userInfo.description || ''
-            }
+            description={description || ''}
             done={NextStep}
           />
         );
@@ -293,14 +262,14 @@ class Setup extends Component {
             BackStep={BackStep}
           />
         );
-      case 5:
+      /*       case 5:
         return (
           <PickType
             InputStep={this.InputStep}
             BackStep={BackStep}
           />
-        );
-      case 6:
+        ); */
+      case 5:
         const picGallery = {};
         picGallery.set1 = this.set1;
         picGallery.set2 = this.set2;
@@ -308,22 +277,22 @@ class Setup extends Component {
         picGallery.pic1 = picture.pic1_url;
         picGallery.pic2 = picture.pic2_url;
         picGallery.pic3 = picture.pic3_url;
-        if (userInfo.profile_type === 'pictures')
-          return (
-            <Pics
-              InputStep={this.InputStep}
-              BackStep={BackStep}
-              picGallery={picGallery}
-              done={NextStep}
-            />
-          ); //will add a conditional here
+        /* if (profile_type === 'pictures') */
         return (
+          <Pics
+            InputStep={this.InputStep}
+            BackStep={BackStep}
+            picGallery={picGallery}
+            done={NextStep}
+          />
+        ); //will add a conditional here
+      /* return (
           <Links
             sendLinks={this.sendLinks}
             BackStep={BackStep}
           />
-        );
-      case 7:
+        ); */
+      case 6:
         return (
           <PickPW
             InputStep={this.InputStep}
@@ -331,7 +300,7 @@ class Setup extends Component {
             done={this.LastStep}
           />
         );
-      case 8:
+      case 7:
         return <Prepare />;
     }
   };
@@ -339,11 +308,11 @@ class Setup extends Component {
     const {
       userInfo,
       step,
-      fireRedirect,
+      fireRedirect
     } = this.props;
     let count;
-    if (step < 8)
-      count = `You're at step ${step}/7`;
+    if (step < 7)
+      count = `You're at step ${step}/6`;
     else count = '';
     return (
       <div className="setup">
@@ -367,40 +336,40 @@ const mapStateToProps = state => {
     userInfo: state.UserInfo.userInfo,
     step: state.Steps.step,
     picture: state.Pictures.picture,
-    fireRedirect: state.Steps.fireRedirect,
+    fireRedirect: state.Steps.fireRedirect
   };
 };
 const mapDispatchToProps = dispatch => {
   return {
     NextStep: () =>
       dispatch({
-        type: actionTypes.NEXT_STEP,
+        type: actionTypes.NEXT_STEP
       }),
     BackStep: () =>
       dispatch({
-        type: actionTypes.PREV_STEP,
+        type: actionTypes.PREV_STEP
       }),
     Redirect: () =>
       dispatch({
-        type: actionTypes.REDIRECT,
+        type: actionTypes.REDIRECT
       }),
     UpdateUserInfo: (property, input) =>
       dispatch({
         type: actionTypes.UPDATE_USER,
         property,
-        input,
+        input
       }),
     UpdateUserPic: picture =>
       dispatch({
         type: picture.name,
-        picture,
-      }),
+        picture
+      })
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(Setup);
 /* 
 Todo
@@ -417,4 +386,35 @@ Bonus:
 add a progress bar
 maybe ask: what is your favorite thing about yourself?
 
-*/
+
+
+Suggested Feature: profile that links to websites 
+                  and generates thumbnails for them
+
+getThumbnails = links => {
+    if (!links.length) return this.setupDone();
+    axios
+      .get(
+        `http://free.pagepeeker.com/v2/thumbs.php?size=x&url=${
+          links[0].url
+        }`
+      )
+      .then(res => {
+        console.log(res);
+        let userInfo = this.props.userInfo;
+        let index =
+          this.props.links.length - links.length;
+        userInfo.links[index].thumbnail = res;
+        this.setState({
+          userInfo: userInfo
+        });
+        links.shift();
+        return this.getThumbnails(links);
+      });
+  }; */
+/* sendLinks = links => {
+    console.log(links);
+    let userInfo = this.state.userInfo;
+    userInfo.links = links;
+    this.getThumbnails(links);
+  }; */
