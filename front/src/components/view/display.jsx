@@ -6,18 +6,14 @@ String.prototype.capitalize = function() {
     return a.toUpperCase();
   });
 }; //taken from stackOverflow
-const SERVER = `http://localhost:3002/`;
 
 class LoadSite extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { pageData: null };
-  }
+  state = { pageData: null };
   componentDidMount() {
     const siteName = this.props.match.params.name.capitalize();
     axios
       .get(
-        `${SERVER}site/${siteName}`
+        `/site/${siteName}`
       )
       .then(res =>
         this.setState({

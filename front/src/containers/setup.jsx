@@ -9,8 +9,6 @@ import axios from 'axios';
 import Steps from '../components/setup/steps';
 import * as actionTypes from '../store/actions';
 
-const SERVER = `http://localhost:3002/`;
-
 class PictureObject {
   constructor(name, image, url) {
     this.name = name; //'PROFILE','PICTURE1',etc
@@ -68,7 +66,7 @@ class Setup extends Component {
     const image = images[0];
     //console.log(`sending ${name}`);
     axios
-      .get(`${SERVER}config/request`)
+      .get(`/config/request`)
       .then(data => {
         const { url, params } = data.data.data;
         const uploadRequest = superagent.post(
@@ -107,7 +105,7 @@ class Setup extends Component {
     data.picture3 = this.props.picture.pic3_url;
     axios({
       method: 'POST',
-      url: `${SERVER}create/1`,
+      url: `/create/1`,
       data
     })
       .then(res => this.props.Redirect())
